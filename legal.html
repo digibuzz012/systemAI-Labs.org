@@ -91,6 +91,46 @@
 
     <script>
         feather.replace();
+
+        const nav = document.getElementById('nav');
+        const navLinks = document.getElementById('navLinks');
+        const menuToggle = document.getElementById('menuToggle');
+        const menuIcon = document.getElementById('menuIcon');
+
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            const open = navLinks.classList.contains('open');
+            menuIcon.setAttribute('data-feather', open ? 'x' : 'menu');
+            feather.replace();
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('open');
+                menuIcon.setAttribute('data-feather', 'menu');
+                feather.replace();
+            });
+        });
+
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.transitionDelay = `${(entry.target.dataset.delay || 0) * 0.1}s`;
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        revealEls.forEach((el, i) => {
+            el.dataset.delay = i % 4;
+            observer.observe(el);
+        });
     </script>
 </body>
 </html>

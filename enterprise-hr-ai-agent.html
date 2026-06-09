@@ -271,57 +271,47 @@
     </footer>
 
     <script>
-        // Initialize Feather Icons
         feather.replace();
 
-        // Google Apps Script URL for the waitlist
-        const scriptURL = "https://script.google.com/macros/s/AKfycbzSjnGZgfQkZFfREcZwsgeDDN_8iBVlOSe5RFgtlvUjZ0EZt1oIiTlY3qSP0ohTne9v/exec";
+        const nav = document.getElementById('nav');
+        const navLinks = document.getElementById('navLinks');
+        const menuToggle = document.getElementById('menuToggle');
+        const menuIcon = document.getElementById('menuIcon');
 
-        // Top Waitlist Form Submission
-        function sendData() {
-            const email = document.getElementById('emailInput').value;
-            const btn = document.getElementById('submitBtn');
-            const msg = document.getElementById('responseMessage');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+        });
 
-            if (!email) { alert('Please enter an email'); return; }
-            
-            btn.innerText = 'Sending...';
-            btn.disabled = true;
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            const open = navLinks.classList.contains('open');
+            menuIcon.setAttribute('data-feather', open ? 'x' : 'menu');
+            feather.replace();
+        });
 
-            fetch(scriptURL + '?email=' + encodeURIComponent(email), { method: 'GET', mode: 'no-cors' })
-            .then(() => {
-                document.getElementById('waitlistform').style.display = 'none';
-                msg.style.display = 'block';
-            })
-            .catch(error => {
-                alert('Error! Please try again or email support.');
-                btn.innerText = 'Join the Beta';
-                btn.disabled = false;
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('open');
+                menuIcon.setAttribute('data-feather', 'menu');
+                feather.replace();
             });
-        }
+        });
 
-        // Bottom Waitlist Form Submission
-        function sendData2() {
-            const email = document.getElementById('emailInput2').value;
-            const btn = document.getElementById('submitBtn2');
-            const msg = document.getElementById('responseMessage2');
-
-            if (!email) { alert('Please enter an email'); return; }
-            
-            btn.innerText = 'Sending...';
-            btn.disabled = true;
-
-            fetch(scriptURL + '?email=' + encodeURIComponent(email), { method: 'GET', mode: 'no-cors' })
-            .then(() => {
-                document.getElementById('waitlistform2').style.display = 'none';
-                msg.style.display = 'block';
-            })
-            .catch(error => {
-                alert('Error! Please try again or email support.');
-                btn.innerText = 'Join the Beta';
-                btn.disabled = false;
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.transitionDelay = `${(entry.target.dataset.delay || 0) * 0.1}s`;
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
             });
-        }
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        revealEls.forEach((el, i) => {
+            el.dataset.delay = i % 4;
+            observer.observe(el);
+        });
     </script>
 </body>
 </html>
